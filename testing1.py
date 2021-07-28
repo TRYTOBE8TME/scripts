@@ -20,7 +20,7 @@ def curl(*args):
 os.chdir("/home/kalpesh/keycloak-14.0.0/bin")
 kcadm("config", "credentials", "--server", "http://localhost:8080/auth", "--realm", "master", "--user", "admin", "--password", "admin" ,"--client", "admin-cli")
 kcadm("create", "realms", "-s", "realm=demorealm9", "-s", "enabled=true", "-s", "accessTokenLifespan=2800", "-o")
-kcadm("create", "clients", "-r", "demorealm9", "-s", "clientId=my_client", "-s", 'redirectUris=["http://localhost:8080/myapp/*"]')
+kcadm("create", "clients", "-r", "demorealm9", "-s", "clientId=my_client", "-s", "-s", "directAccessGrantsEnabled=true", 'redirectUris=["http://localhost:8080/myapp/*"]')
 
 comm=subprocess.Popen(['/home/kalpesh/keycloak-14.0.0/bin/kcadm.sh','get','clients','-r','demorealm9','-F','id,clientId'],stdout=subprocess.PIPE)
 out=subprocess.run(['jq','-r','.[] | select (.clientId == "my_client") | .id'],stdin=comm.stdout,stdout=subprocess.PIPE)
