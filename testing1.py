@@ -44,6 +44,33 @@ print(ans0)
 y="client_secret={}".format(ans1.stdout.decode("utf-8")[15:51])
 print(y)
 
+
+#New Section
+
+pm = w+"/protocol-mappers/models"
+uname = "username=testuser"
+upass = "password=testuser"
+
+print(pm)
+
+kcadm("create", "users", "-s", uname, "-s", "enabled=true", "-s", 'attributes.\"https://aws.amazon.com/tags\"=\"{"principal_tags":{"Department":["Engineering", "Marketing"]}}\"', "-r", "demorealm37")
+
+kcadm("set-password", "-r", "demorealm37", "--username", "testuser", "--new-password", "testuser")
+
+what_is = kcadm("create", pm, "-r", "demorealm37", "-f", "/home/kalpesh/confi.py")
+
+kcadm("config", "credentials", "--server", "http://localhost:8080/auth", "--realm", "demorealm37", "--user", "testuser", "--password", "testuser" ,"--client", "admin-cli")
+
+new_pre_ans=subprocess.Popen(["curl", "-k", "-v", "-X", "POST", "-H", "Content-Type:application/x-www-form-urlencoded", "-d", "scope=openid", "-d", "grant_type=password", "-d", "client_id=my_client", "-d", y , "-d", uname, "-d", upass, "http://localhost:8080/auth/realms/demorealm37/protocol/openid-connect/token"],stdout=subprocess.PIPE)
+
+user_token=subprocess.run(['jq', '-r','.access_token'],stdin=new_pre_ans.stdout,stdout=subprocess.PIPE)
+utoken="{}".format(user_token.stdout.decode("utf-8"))
+print(utoken)
+
+#End of New Section
+
+
+
 ans2=subprocess.Popen(['curl',"-k", "-v", "-X", "POST", "-H", "Content-Type:application/x-www-form-urlencoded", "-d", "scope=openid", "-d", "grant_type=client_credentials", "-d", "client_id=my_client", "-d", y , "http://localhost:8080/auth/realms/demorealm9/protocol/openid-connect/token"],stdout=subprocess.PIPE)
 web_token=subprocess.run(['jq', '-r','.access_token'],stdin=ans2.stdout,stdout=subprocess.PIPE)
 answer="{}".format(web_token.stdout.decode("utf-8"))
@@ -77,4 +104,3 @@ print(c)
 #print(aud_output)
 #final_aud_answer = "{}".format(aud_output.stdout.decode("utf-8"))
 #print(final_aud_answer)
-
